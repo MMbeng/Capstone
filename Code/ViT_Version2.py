@@ -133,13 +133,13 @@ def detection_loss(preds, targets):
         labels = gt['labels'].to(DEVICE)
 
         if boxes.numel() == 0 or labels.numel() == 0:
-            continue  # skip images with no objects
+            continue  
 
         assignments = assign_gt_to_patches(boxes)
 
         for patch_idx, box in enumerate(assignments):
             if box is None:
-                continue  # skip patches with no assigned gt
+                continue 
 
             box_tensor = box.clone().detach().to(dtype=torch.float32, device=DEVICE)
             pred_box = pred[patch_idx, :4]
@@ -218,7 +218,6 @@ def evaluate(model, dataloader):
         images = torch.stack(images).to(DEVICE)
         preds = model(images)
 
-        # Convert predictions to expected format
         preds_list = []
         for pred in preds:
             boxes = pred[:, :4]
@@ -228,8 +227,7 @@ def evaluate(model, dataloader):
                 "scores": scores.cpu(),
                 "labels": labels.cpu()
             })
-
-        # Convert targets too
+            
         targets_list = []
         for tgt in preprocess_targets(targets):
             targets_list.append({
